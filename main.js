@@ -26,7 +26,7 @@ function Gameboard() {
             console.log("Cell already occupied. Choose another one.")
         }
         printBoard();
-    }
+    };
 
     // Used for console testing before UI
     const printBoard = () => {
@@ -75,28 +75,65 @@ function GameController(playerOneName = "Player One", playerTwoName = " Player T
         console.log(`${getActivePlayer().name}'s turn`);
     };
 
-    // Needs to be updated
-   const playRound = (row,column) => {
-    
-    board.markCell(row, column, getActivePlayer().token);
+    // Check to see if row win condition is met
+    const checkRow = (board) => {
+        for (let i = 0; i < board.length; i++) {
+            const firstValue = board[i][0].getValue();
+            if (firstValue !== 0 && board[i].every(cell => cell.getValue() === firstValue)) {
+                return true;
+            }
+        }
+        return false;
+    };
 
-    if (board)
+    // Check to see if column win condition is met
+    const checkColumn = (board) => {
+        for (let i = 0; i < board[0].length; i++) {
+            const firstValue = board[0][i].getValue();
+            if (firstValue !== 0 && board.every(row => row[i].getValue() === firstValue)) {
+                return true;
+            }
+        }
+        return false;
+    };
 
-    switchPlayerTurn();
-    printNewRound();
+    // Check to see if diagonal win condition is met
+    const checkDiagonal = (board) => {
+
+        // Index Top Left and Bottom Right of Board
+        const topLeftIndex = board[0][0];
+        const topRightIndex = board[0][board.length - 1];
+
+
+        // Check top left to bottom right diagonal
+        const topLeftBottomRight = board.every((row, i) => row[i].getValue() === topLeftIndex.getValue() && topLeftIndex.getValue() !== 0);
+        
+        // Check top right to bottom left diagonal
+        const topRightBottomLeft = board.every((row, i) => row[board.length - 1 - i].getValue() === topRightIndex.getValue() && topRightIndex.getValue() !== 0);
+
+        // Return true / false status of each diagonal check
+        return topLeftBottomRight || topRightBottomLeft;
+    };
+
+    const playRound = (row,column) => {
+        board.markCell(row, column, getActivePlayer().token);
+
+        if (checkRow(board.getBoard()) || checkColumn(board.getBoard()) || checkDiagonal(board.getBoard())) {
+            console.log(`${getActivePlayer().name} Wins!`);
+        }
+        else
+        switchPlayerTurn();
+        printNewRound();
    };
 
     // Initial play game message
     printNewRound();
 
-    return { playRound, getActivePlayer }
-};
+    return { playRound, getActivePlayer };
+}
 
 const game = GameController();
 
-    // Assign players 1 and 2
-    // Switch between player turns
-    // End game if player has 3 squares in a row, column, or diagonal; declare winner
     // End game if all squares are filled and win condition is not met, declare tie
 
 // Displaycontroller
