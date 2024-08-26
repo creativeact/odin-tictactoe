@@ -104,7 +104,6 @@ function GameController(playerOneName = "Player One", playerTwoName = " Player T
         const topLeftIndex = board[0][0];
         const topRightIndex = board[0][board.length - 1];
 
-
         // Check top left to bottom right diagonal
         const topLeftBottomRight = board.every((row, i) => row[i].getValue() === topLeftIndex.getValue() && topLeftIndex.getValue() !== 0);
         
@@ -115,11 +114,21 @@ function GameController(playerOneName = "Player One", playerTwoName = " Player T
         return topLeftBottomRight || topRightBottomLeft;
     };
 
+    // Check for ties
+    const checkTie = (board) => {
+        return board.every(row => row.every(cell => cell.getValue() !== 0));
+    };
+
     const playRound = (row,column) => {
         board.markCell(row, column, getActivePlayer().token);
 
+        // Announce winner if any win condition is met
         if (checkRow(board.getBoard()) || checkColumn(board.getBoard()) || checkDiagonal(board.getBoard())) {
             console.log(`${getActivePlayer().name} Wins!`);
+        }
+        // Announce tie if no win condition is met and all cells have a non-zero value
+        else if (checkTie(board.getBoard())){
+            console.log("Tie game");
         }
         else
         switchPlayerTurn();
