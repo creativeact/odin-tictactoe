@@ -1,3 +1,5 @@
+const announcement = document.querySelector('.announcement');
+
 // Create game board
 function Gameboard() {
     
@@ -21,9 +23,10 @@ function Gameboard() {
     const markCell = (row, column, playerToken) => {
         if (board[row][column].getValue() === 0) {
             board[row][column].assignCellValue(playerToken);
+            announcement.textContent = "";
         }
         else {
-            console.log("Cell already occupied. Choose another one.")
+            announcement.textContent = "Cell already occupied. Choose another one.";
         }
         printBoard();
     };
@@ -121,11 +124,11 @@ function GameController(playerOneName = "Player One", playerTwoName = " Player T
 
         // Announce winner if any win condition is met
         if (checkRow(board.getBoard()) || checkColumn(board.getBoard()) || checkDiagonal(board.getBoard())) {
-            console.log(`${getActivePlayer().name} Wins!`);
+            announcement.textContent = `${getActivePlayer().name} Wins!`;
         }
         // Announce tie if no win condition is met and all cells have a non-zero value
         else if (checkTie(board.getBoard())){
-            console.log("Tie game");
+            announcement.textContent = "Tie game";
         }
         else
         switchPlayerTurn();
@@ -167,7 +170,7 @@ function DisplayController() {
                 cellButton.dataset.column = colIndex;
                 
                 // Make cell textContent blank if value is zero
-                cellButton.textContent = cell.getValue() === 0 ? "" : cell.getValue();
+                cellButton.textContent = cell.getValue() === 1 ? "X" : cell.getValue() === 2 ? "O" : "";
                 boardDiv.appendChild(cellButton);
             })
         })

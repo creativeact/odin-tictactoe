@@ -11,19 +11,20 @@ body {
 
 .board {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat (3, 1fr);
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
+    grid-template-rows: repeat(3, minmax(150px, 1fr));
     gap: 5px;
-    height: 500px;
-    width: 500px;
+}
+
+h2 {
+    color: white;
 }
 
 .cell {
     cursor: pointer;
-
+    font-size: 2rem;
 }
 
 .turn {
     margin-bottom: 100px;
-    color: white;
 }
