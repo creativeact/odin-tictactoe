@@ -104,14 +104,11 @@ function GameController(playerOneName = "Player One", playerTwoName = " Player T
         const topLeftIndex = board[0][0];
         const topRightIndex = board[0][board.length - 1];
 
-        // Check top left to bottom right diagonal
-        const topLeftBottomRight = board.every((row, i) => row[i].getValue() === topLeftIndex.getValue() && topLeftIndex.getValue() !== 0);
-        
-        // Check top right to bottom left diagonal
-        const topRightBottomLeft = board.every((row, i) => row[board.length - 1 - i].getValue() === topRightIndex.getValue() && topRightIndex.getValue() !== 0);
+        const checkTopLeftBottomRight = board.every((row, i) => row[i].getValue() === topLeftIndex.getValue() && topLeftIndex.getValue() !== 0);
+        const checkTopRightBottomLeft = board.every((row, i) => row[board.length - 1 - i].getValue() === topRightIndex.getValue() && topRightIndex.getValue() !== 0);
 
         // Return true / false status of each diagonal check
-        return topLeftBottomRight || topRightBottomLeft;
+        return checkTopLeftBottomRight || checkTopRightBottomLeft;
     };
 
     // Check for ties
@@ -138,13 +135,59 @@ function GameController(playerOneName = "Player One", playerTwoName = " Player T
     // Initial play game message
     printNewRound();
 
-    return { playRound, getActivePlayer };
+    return { playRound, getActivePlayer, getBoard: board.getBoard };
 }
 
 const game = GameController();
 
-    // End game if all squares are filled and win condition is not met, declare tie
+function DisplayController() {
+    const game = GameController();
+    const playerTurnDiv = document.querySelector('.turn');
+    const boardDiv = document.querySelector('.board');
 
-// Displaycontroller
-    // Display board
-    // Update board
+    const updateDisplay = () => {
+        // Clear display
+        boardDiv.textContent = "";
+
+        // Get the newest version of the board and player turn
+        const board = game.getBoard();
+        const activePlayer = game.getActivePlayer();
+
+        // Display player's turn
+        playerTurnDiv.textContent = `${activePlayer.name}'s turn`
+
+        // Render board squares
+        board.forEach((row, rowIndex)=> { 
+            row.forEach((cell, colIndex) => {
+                const cellButton = document.createElement('button');
+                cellButton.classList.add('cell');
+
+                // Create data attributes to help with passing to playRound function
+                cellButton.dataset.row = rowIndex;
+                cellButton.dataset.column = colIndex;
+                
+                // Make cell textContent blank if value is zero
+                cellButton.textContent = cell.getValue() === 0 ? "" : cell.getValue();
+                boardDiv.appendChild(cellButton);
+            })
+        })
+    }
+
+    // Add event listener
+    function clickHandlerBoard(e) {
+        const clickedCell = e.target;
+
+        if (clickedCell.classList.contains('cell')) {
+            const row = parseInt(clickedCell.dataset.row);
+            const column = parseInt(clickedCell.dataset.column);
+            game.playRound(row, column);
+            updateDisplay();
+        }
+    }
+    boardDiv.addEventListener('click', clickHandlerBoard);
+
+    // Initial render
+    updateDisplay();
+}
+
+DisplayController();
