@@ -24,11 +24,12 @@ function Gameboard() {
         if (board[row][column].getValue() === 0) {
             board[row][column].assignCellValue(playerToken);
 
-            // Reset announcement text to blank
-            announcement.textContent = "";
+            // Return 0 for success
+            return 0;
         }
         else {
-            announcement.textContent = "Cell already occupied. Choose another one.";
+            // Return 1 for failure
+            return 1;
         }
     };
 
@@ -61,7 +62,6 @@ function GameController(playerOneName = "Player One", playerTwoName = " Player T
     const board = Gameboard();
 
     let gameStatus = null;
-
     const getGameStatus = () => gameStatus;
 
     const players = [
@@ -123,21 +123,24 @@ function GameController(playerOneName = "Player One", playerTwoName = " Player T
     };
 
     const playRound = (row,column) => {
-        board.markCell(row, column, getActivePlayer().token);
-
-        // Announce winner if any win condition is met
-        if ((checkRow(board.getBoard()) || checkColumn(board.getBoard()) || checkDiagonal(board.getBoard()))) {
-            announcement.textContent = `${getActivePlayer().name} Wins!`;
-            gameStatus = 'complete';
-        }
-        // Announce tie if no win condition is met and all cells have a non-zero value
-        else if (checkTie(board.getBoard())){
-            announcement.textContent = "Tie game";
-            gameStatus = 'complete';
+        
+        // First check to see if valid cell was picked (markCell returns 1 for failure)
+        if (board.markCell(row, column, getActivePlayer().token) === 1) {
+            return;
         }
         else
-        switchPlayerTurn();
-        printNewRound();
+            // Announce winner if any win condition is met
+            if ((checkRow(board.getBoard()) || checkColumn(board.getBoard()) || checkDiagonal(board.getBoard()))) {
+                announcement.textContent = `${getActivePlayer().name} Wins!`;
+                gameStatus = 'complete';
+            }
+            // Announce tie if no win condition is met and all cells have a non-zero value
+            else if (checkTie(board.getBoard())){
+                announcement.textContent = "Tie game";
+                gameStatus = 'complete';
+            }
+            switchPlayerTurn();
+            printNewRound();
    };
 
     // Initial play game message
@@ -186,8 +189,11 @@ function DisplayController() {
         const clickedCell = e.target;
 
         if (clickedCell.classList.contains('cell') && game.getGameStatus() !== 'complete') {
+
+            // Get the row and column value of the click cell 
             const row = parseInt(clickedCell.dataset.row);
             const column = parseInt(clickedCell.dataset.column);
+
             game.playRound(row, column);
             updateDisplay();
         }
