@@ -57,7 +57,7 @@ function Cell() {
 }
 
 // Control flow of the game
-function GameController(playerOneName = "Player One", playerTwoName = " Player Two") {
+function GameController(playerOneName = "Player 1", playerTwoName = " Player 2") {
     
     const board = Gameboard();
 
@@ -124,7 +124,7 @@ function GameController(playerOneName = "Player One", playerTwoName = " Player T
 
     const playRound = (row,column) => {
         
-        // First check to see if valid cell was picked (markCell returns 1 for failure)
+        // Check to see if valid cell was picked before proceeding (markCell returns 1 for failure)
         if (board.markCell(row, column, getActivePlayer().token) === 1) {
             return;
         }
@@ -155,6 +155,7 @@ function DisplayController() {
     const game = GameController();
     const playerTurnDiv = document.querySelector('.turn');
     const boardDiv = document.querySelector('.board');
+    const restart = document.querySelector('.restart');
 
     const updateDisplay = () => {
         // Clear display
@@ -182,9 +183,11 @@ function DisplayController() {
                 boardDiv.appendChild(cellButton);
             })
         })
+
+        // Set color of the cell font depending on the player's token
     }
 
-    // Add event listener
+    // Board click handler function to update display after a cell is clicked
     function clickHandlerBoard(e) {
         const clickedCell = e.target;
 
@@ -200,8 +203,15 @@ function DisplayController() {
     }
     boardDiv.addEventListener('click', clickHandlerBoard);
 
+    // Restart button event listener
+    restart.addEventListener('click', () => {
+        GameController(playerOneName = "Player 1", playerTwoName = " Player 2");
+        DisplayController();
+        announcement.textContent = "";
+    });
+
     // Initial render
-    updateDisplay();
+     updateDisplay();
 }
 
 DisplayController();
