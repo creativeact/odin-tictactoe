@@ -1,5 +1,3 @@
-const announcement = document.querySelector('.announcement');
-
 // Create game board
 function Gameboard() {
     
@@ -61,7 +59,7 @@ function GameController(playerOneName = "Player 1", playerTwoName = " Player 2")
     
     const board = Gameboard();
 
-    let gameStatus = null;
+    let gameStatus = 'active';
     const getGameStatus = () => gameStatus;
 
     const players = [
@@ -129,15 +127,13 @@ function GameController(playerOneName = "Player 1", playerTwoName = " Player 2")
             return;
         }
         else
-            // Announce winner if any win condition is met
+            // Set game status to win if any win condition is met
             if ((checkRow(board.getBoard()) || checkColumn(board.getBoard()) || checkDiagonal(board.getBoard()))) {
-                announcement.textContent = `${getActivePlayer().name} Wins!`;
-                gameStatus = 'complete';
+                gameStatus = 'win';
             }
-            // Announce tie if no win condition is met and all cells have a non-zero value
+            // Set game status to tie
             else if (checkTie(board.getBoard())){
-                announcement.textContent = "Tie game";
-                gameStatus = 'complete';
+                gameStatus = 'tie';
             }
             switchPlayerTurn();
             printNewRound();
@@ -153,7 +149,7 @@ const game = GameController();
 
 function DisplayController() {
     const game = GameController();
-    const playerTurnDiv = document.querySelector('.turn');
+    const announcement = document.querySelector('.announcement');
     const boardDiv = document.querySelector('.board');
     const restart = document.querySelector('.restart');
 
@@ -164,9 +160,19 @@ function DisplayController() {
         // Get the newest version of the board and player turn
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
+        const status = game.getGameStatus();
 
-        // Display player's turn
-        playerTurnDiv.textContent = `${activePlayer.name}'s turn`
+        // Adjust announcement div depending on game status
+        if (status === 'active') {
+            announcement.textContent = `${activePlayer.name}'s turn`;
+        }
+        else if (status === 'win') {
+            announcement.textContent = `${activePlayer.name} Wins!`;
+        }
+        else if (status === 'tie') {
+            announcement.textContent = "Tie game";
+        }
+        else announcement.textContent = "";
 
         // Render board squares
         board.forEach((row, rowIndex)=> { 
@@ -190,9 +196,9 @@ function DisplayController() {
     function clickHandlerBoard(e) {
         const clickedCell = e.target;
 
-        if (clickedCell.classList.contains('cell') && game.getGameStatus() !== 'complete') {
+        if (clickedCell.classList.contains('cell') && game.getGameStatus() !== 'win') {
 
-            // Get the row and column value of the click cell 
+            // Get the row and column value of the click cell
             const row = parseInt(clickedCell.dataset.row);
             const column = parseInt(clickedCell.dataset.column);
 
@@ -206,7 +212,6 @@ function DisplayController() {
     restart.addEventListener('click', () => {
         GameController();
         DisplayController();
-        announcement.textContent = "";
     });
 
     // Initial render
