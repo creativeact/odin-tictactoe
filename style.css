@@ -45,3 +45,15 @@ button {
 .announcement {
     margin-bottom: 20px;
 }
+
+span {
+    padding-left: 15px;
+}
+
+.player-1 span {
+    color: red;
+}
+
+.player-2 span {
+    color: blue;
+}

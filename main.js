@@ -180,11 +180,10 @@ function DisplayController() {
                 
                 // Make cell textContent blank if value is zero
                 cellButton.textContent = cell.getValue() === 1 ? "X" : cell.getValue() === 2 ? "O" : "";
+                cellButton.style.color = cell.getValue() === 1 ? "red" : cell.getValue() === 2 ? "blue" : "black";
                 boardDiv.appendChild(cellButton);
             })
         })
-
-        // Set color of the cell font depending on the player's token
     }
 
     // Board click handler function to update display after a cell is clicked
@@ -205,7 +204,7 @@ function DisplayController() {
 
     // Restart button event listener
     restart.addEventListener('click', () => {
-        GameController(playerOneName = "Player 1", playerTwoName = " Player 2");
+        GameController();
         DisplayController();
         announcement.textContent = "";
     });
@@ -213,5 +212,4 @@ function DisplayController() {
     // Initial render
      updateDisplay();
 }
-
 DisplayController();
