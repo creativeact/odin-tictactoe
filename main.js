@@ -58,6 +58,7 @@ function Cell() {
 function GameController(playerOneName = "Player 1", playerTwoName = " Player 2") {
     
     const board = Gameboard();
+    const announcement = document.querySelector('.announcement');
 
     let gameStatus = 'active';
     const getGameStatus = () => gameStatus;
@@ -130,10 +131,12 @@ function GameController(playerOneName = "Player 1", playerTwoName = " Player 2")
             // Set game status to win if any win condition is met
             if ((checkRow(board.getBoard()) || checkColumn(board.getBoard()) || checkDiagonal(board.getBoard()))) {
                 gameStatus = 'win';
+                announcement.textContent = `${activePlayer.name} Wins!`;
             }
             // Set game status to tie
             else if (checkTie(board.getBoard())){
                 gameStatus = 'tie';
+                announcement.textContent = "Tie game";
             }
             switchPlayerTurn();
             printNewRound();
@@ -149,9 +152,9 @@ const game = GameController();
 
 function DisplayController() {
     const game = GameController();
-    const announcement = document.querySelector('.announcement');
     const boardDiv = document.querySelector('.board');
     const restart = document.querySelector('.restart');
+    const announcement = document.querySelector('.announcement');
 
     const updateDisplay = () => {
         // Clear display
@@ -163,16 +166,9 @@ function DisplayController() {
         const status = game.getGameStatus();
 
         // Adjust announcement div depending on game status
-        if (status === 'active') {
+        if (status !== 'win' && status !== 'tie') {
             announcement.textContent = `${activePlayer.name}'s turn`;
         }
-        else if (status === 'win') {
-            announcement.textContent = `${activePlayer.name} Wins!`;
-        }
-        else if (status === 'tie') {
-            announcement.textContent = "Tie game";
-        }
-        else announcement.textContent = "";
 
         // Render board squares
         board.forEach((row, rowIndex)=> { 
